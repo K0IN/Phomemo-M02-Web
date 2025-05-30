@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { PhomemoPrinter } from './logic/phomemo';
-import { convertImageToBits, loadImageFromUrl } from './logic/imagehelper.ts'
+// import { convertImageToBits, loadImageFromUrl } from './logic/imagehelper.ts'
 import ImagePreview from './components/ImagePreview.vue';
 import type { PrinterImage } from './logic/printerimage.ts';
 import ImageDragAndDrop from './components/ImageDragAndDrop.vue';
+import { convertImageToBits } from './logic/imagehelper.ts';
 
 
 const isConnected = ref(false);
@@ -15,7 +16,7 @@ const paperState = ref(0);
 
 const imageDataRef = ref<PrinterImage | null>(null);
 
-// const printerSizeWidth = 48 * 8; // 72 * 8 = 576;
+const printerSizeWidth = 48 * 8; // 72 * 8 = 576;
 
 //
 // onMounted(async () => {
@@ -45,23 +46,18 @@ async function connectToRouter() {
     serialNumber.value = await printer.getSerialNumber();
     paperState.value = await printer.getPaperState();
 
-    // console.log('Image data:', imageData);
-    //  if (imageData.length === 0) {
-    //      console.error('Image data is empty, cannot print');
-    //      return;
-    //  }
-    await printer.resetPrinter();
 
-    await printer.initializePrinter();
-    await printer.alignCenter();
-    const imageData = imageDataRef.value;
+    // await printer.resetPrinter();
+    // await printer.initializePrinter();
+    // await printer.alignCenter();
+    // await printer.printRasterBitImage(imageDataRef.value);
+    // await printer.printFeedLines(4);
 
-    await printer.printRasterBitImage(imageData);
-    await printer.printFeedLines(4);
+}
 
-    //  await printer.feedPaperCut();
-    // printer.resetPrinter();
-    //  printer.disconnect();
+function setImage(image: HTMLImageElement) {
+    const imageData = convertImageToBits(image, printerSizeWidth); // Assuming 48mm width in pixels
+    imageDataRef.value = imageData;
 }
 
 </script>
@@ -89,7 +85,7 @@ async function connectToRouter() {
             <ImagePreview :image="imageDataRef" />
         </div>
 
-        <ImageDragAndDrop @imageLoaded="(image) => imageDataRef = image" />
+        <ImageDragAndDrop @imageLoaded="(image) => setImage(image)" />
     </main>
 </template>
 
