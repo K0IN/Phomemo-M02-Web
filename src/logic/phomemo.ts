@@ -22,16 +22,16 @@ export class PhomemoPrinter {
     async disconnect(): Promise<void> {
         if (this.reader && !this.reader.closed) {
             this.reader.releaseLock();
-            this.reader.cancel();
+            await this.reader.cancel().catch(() => { });
             this.reader = undefined;
         }
         if (this.writer && !this.writer.closed) {
             this.writer.releaseLock();
-            this.writer.close();
+            await this.writer.close().catch(() => { });
             this.writer = undefined;
         }
         if (this.port) {
-            await this.port.close();
+            await this.port.close().catch(() => { });
             this.port = undefined;
         }
     }
@@ -47,7 +47,7 @@ export class PhomemoPrinter {
         }
     }
 
-    async getPower(): Promise<number> {
+    async getBatteryLevel(): Promise<number> {
         if (!this.port || !this.writer || !this.reader) throw new Error('Not connected to printer');
         await this.writer.write(new Uint8Array([0x1F, 0x11, 0x08]));
         const { value } = await this.reader.read();

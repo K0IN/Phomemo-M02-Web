@@ -15,6 +15,7 @@
         "./src/*"
       ]
     },
-    "target": "ESNext"
-  }
+    "target": "ESNext",
+    "baseUrl": "."
+  },
 }

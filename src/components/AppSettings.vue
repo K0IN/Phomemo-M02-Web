@@ -1,0 +1,73 @@
+<script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/components/ui/popover'
+import { Settings } from 'lucide-vue-next'
+
+import { ref } from 'vue'
+import Separator from './ui/separator/Separator.vue'
+import Switch from './ui/switch/Switch.vue'
+
+const pixelsPerLine = ref(384);
+</script>
+
+<template>
+    <Popover>
+        <PopoverTrigger as-child>
+            <Button variant="secondary">
+                <Settings />
+            </Button>
+        </PopoverTrigger>
+        <PopoverContent class="w-80" side="left" align="start">
+            <div class="grid gap-4">
+                <div class="space-y-2">
+                    <h4 class="font-medium leading-none">
+                        Printer Settings
+                    </h4>
+                    <p class="text-sm text-muted-foreground">
+                        Configure your printer parameters
+                    </p>
+                </div>
+                <Separator />
+                <div class="flex flex-col gap-4">
+                    <div>
+                        <Label for="pixelsPerLine">Pixels per Line</Label>
+                        <Input id="pixelsPerLine" type="number" v-model="pixelsPerLine" class="mt-1" />
+                        <div class="text-xs text-muted-foreground mt-1">Common values: 384, 576</div>
+                    </div>
+                    <div>
+                        <Label class="mb-1">Quick Presets</Label>
+                        <div class="flex gap-2 mt-1">
+                            <Button size="sm" :variant="pixelsPerLine === 384 ? 'default' : 'outline'"
+                                @click="pixelsPerLine = 384">384px</Button>
+                            <Button size="sm" :variant="pixelsPerLine === 576 ? 'default' : 'outline'"
+                                @click="pixelsPerLine = 576">576px</Button>
+                        </div>
+                    </div>
+
+                    <Separator />
+
+                    <div>
+                        <Label class="mb-1">Advanced Settings</Label>
+                        <p class="text-xs text-muted-foreground mb-2">
+                            These settings are for advanced users. Use with caution.
+                        </p>
+                        <div class="flex items-center space-x-2">
+                            <Switch id="showAllBluetoothDevices" />
+                            <Label for="showAllBluetoothDevices">
+                                Show All Bluetooth Devices
+                            </Label>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </PopoverContent>
+    </Popover>
+</template>

@@ -1,18 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { PhomemoPrinter } from './logic/phomemo';
-// import { convertImageToBits, loadImageFromUrl } from './logic/imagehelper.ts'
-import ImagePreview from './components/ImagePreview.vue';
+
 import type { PrinterImage } from './logic/printerimage.ts';
-import ImageDragAndDrop from './components/ImageDragAndDrop.vue';
 import { convertImageToBits } from './logic/imagehelper.ts';
 
 
-const isConnected = ref(false);
-const power = ref(0);
-const firmwareVersion = ref('');
-const serialNumber = ref(0);
-const paperState = ref(0);
+import { Printer } from 'lucide-vue-next';
+
+import { Toaster } from '@/components/ui/sonner'
+import 'vue-sonner/style.css'
+
+import ImagePreview from './components/ImagePreview.vue';
+import ImageDragAndDrop from './components/ImageDragAndDrop.vue';
+import PrinterConnectionCard from './components/PrinterConnectionCard.vue';
+import ImageConversionCard from './components/ImageConversionCard.vue';
+import AppSettings from './components/AppSettings.vue';
+
+
+// const isConnected = ref(false);
+// const power = ref(0);
+// const firmwareVersion = ref('');
+// const serialNumber = ref(0);
+// const paperState = ref(0);
 
 const imageDataRef = ref<PrinterImage | null>(null);
 
@@ -25,35 +34,35 @@ const printerSizeWidth = 48 * 8; // 72 * 8 = 576;
 //     imageDataRef.value = imageData;
 // });
 
-async function connectToRouter() {
-    if (!imageDataRef.value) {
-        console.error('No image data available to print');
-        alert('Please load an image first.');
-        return;
-    }
-
-    const printer = new PhomemoPrinter();
-    try {
-        await printer.connect();
-        isConnected.value = true;
-        console.log('Connected to printer successfully');
-    } catch (error) {
-        console.error('Failed to connect to printer:', error);
-    }
-
-    power.value = await printer.getPower();
-    firmwareVersion.value = await printer.getFirmwareVersion();
-    serialNumber.value = await printer.getSerialNumber();
-    paperState.value = await printer.getPaperState();
-
-
-    // await printer.resetPrinter();
-    // await printer.initializePrinter();
-    // await printer.alignCenter();
-    // await printer.printRasterBitImage(imageDataRef.value);
-    // await printer.printFeedLines(4);
-
-}
+// async function connectToRouter() {
+//     if (!imageDataRef.value) {
+//         console.error('No image data available to print');
+//         alert('Please load an image first.');
+//         return;
+//     }
+//
+//     const printer = new PhomemoPrinter();
+//     try {
+//         await printer.connect();
+//         isConnected.value = true;
+//         console.log('Connected to printer successfully');
+//     } catch (error) {
+//         console.error('Failed to connect to printer:', error);
+//     }
+//
+//     power.value = await printer.getBatteryLevel();
+//     firmwareVersion.value = await printer.getFirmwareVersion();
+//     serialNumber.value = await printer.getSerialNumber();
+//     paperState.value = await printer.getPaperState();
+//
+//
+//     // await printer.resetPrinter();
+//     // await printer.initializePrinter();
+//     // await printer.alignCenter();
+//     // await printer.printRasterBitImage(imageDataRef.value);
+//     // await printer.printFeedLines(4);
+//
+// }
 
 function setImage(image: HTMLImageElement) {
     const imageData = convertImageToBits(image, printerSizeWidth); // Assuming 48mm width in pixels
@@ -63,8 +72,57 @@ function setImage(image: HTMLImageElement) {
 </script>
 
 <template>
-    <header></header>
     <main>
+        <header class="app-header">
+            <div class="app-header-titles">
+                <h1 class="app-title">
+                    <Printer class="printer-icon" />
+                    Phomemo M02 Web Printer
+                </h1>
+                <p class="app-subtitle">Mobile Recipe Printer</p>
+            </div>
+            <div class="app-settings-corner">
+                <AppSettings />
+            </div>
+        </header>
+        <div class="settings-panel">
+            <PrinterConnectionCard />
+            <ImageDragAndDrop @imageLoaded="(image) => setImage(image)" />
+            <ImageConversionCard />
+        </div>
+        <div class="preview-panel">
+            <ImagePreview :image="imageDataRef" style="width: 100%;" />
+        </div>
+    </main>
+
+    <!--
+        <Button>Click me</Button>
+        <Sheet>
+            <SheetTrigger>Open</SheetTrigger>
+            <SheetContent>
+                <SheetHeader>
+                    <SheetTitle>Are you absolutely sure?</SheetTitle>
+                    <SheetDescription>
+                        This action cannot be undone. This will permanently delete your account
+                        and remove your data from our servers.
+                    </SheetDescription>
+                </SheetHeader>
+            </SheetContent>
+        </Sheet>
+
+        <Button variant="outline" @click="() => {
+            toast('Event has been created', {
+                description: 'Sunday, December 03, 2023 at 9:00 AM',
+                action: {
+                    label: 'Undo',
+                    onClick: () => console.log('Undo'),
+                },
+            })
+        }">
+            Add to calendar
+        </Button>
+
+
         <button @click="connectToRouter">Connect to Router</button>
         <div v-if="isConnected">
             <p>Printer is connected.</p>
@@ -85,37 +143,122 @@ function setImage(image: HTMLImageElement) {
             <ImagePreview :image="imageDataRef" />
         </div>
 
-        <ImageDragAndDrop @imageLoaded="(image) => setImage(image)" />
-    </main>
+        -->
+
+    <Toaster />
 </template>
 
 <style scoped>
-/*
-header {
-    line-height: 1.5;
+main {
+    display: grid;
+    grid-template-areas:
+        "header header"
+        "settings preview";
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 2rem;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: #f0f0f0;
 }
 
-.logo {
-    display: block;
-    margin: 0 auto 2rem;
+.app-header {
+    grid-area: header;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
 }
 
-@media (min-width: 1024px) {
-    header {
-        display: flex;
-        place-items: center;
-        padding-right: calc(var(--section-gap) / 2);
+.app-header-titles {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.app-title {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+    color: #222;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.printer-icon {
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: 0.25em;
+}
+
+.app-subtitle {
+    font-size: 1rem;
+    color: #666;
+    margin-top: 0.25rem;
+    margin-left: 0.1rem;
+}
+
+.app-settings-corner {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    font-size: 1.5rem;
+    margin-left: 1rem;
+}
+
+.settings-panel {
+    grid-area: settings;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.preview-panel {
+    grid-area: preview;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+@media (max-width: 768px) {
+    main {
+        grid-template-areas:
+            "header"
+            "settings"
+            "preview";
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto 1fr;
+        gap: 1.5rem;
+        min-height: unset;
     }
 
-    .logo {
-        margin: 0 2rem 0 0;
+    .preview-panel {
+        align-items: stretch;
     }
 
-    header .wrapper {
-        display: flex;
-        place-items: flex-start;
-        flex-wrap: wrap;
+    .app-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.75rem;
+    }
+
+    .app-title {
+        font-size: 1.3rem;
+    }
+
+    .app-subtitle {
+        font-size: 0.95rem;
+    }
+
+    .app-settings-corner {
+        margin-left: 0;
+        font-size: 1.3rem;
     }
 }
-*/
 </style>
