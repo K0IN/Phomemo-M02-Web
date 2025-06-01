@@ -35,7 +35,6 @@ const printerStore = usePrinterStore();
 const imageConversionOptions = ref(defaultImageConversionOptions);
 const imageRef = ref<HTMLImageElement | null>(null);
 async function setImage(image: HTMLImageElement) {
-    // imageDataRef.value = await convertImageToBits(image, printerSizeWidth, imageConversionOptions.value);
     imageRef.value = image;
 }
 
@@ -63,8 +62,6 @@ async function printImage() {
     } catch (error) {
         console.error('Failed to print image:', error);
     }
-
-
 }
 
 </script>

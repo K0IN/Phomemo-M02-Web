@@ -28,6 +28,11 @@ const isLoading = ref(false);
 const printer = usePrinterStore();
 
 async function connectToPrinter() {
+    if (!printer.isSupported) {
+        toast.error('Your device does not support WebSerial, please try a different device.');
+        return;
+    }
+
     isLoading.value = true;
     try {
         if (printer.isConnected) {
@@ -38,7 +43,7 @@ async function connectToPrinter() {
                 emit('connect');
             } catch (error) {
                 console.error('Failed to connect to printer:', error);
-                toast.error('Failed to connect to printer. Please try again.');
+                toast.error('Failed to connect to printer. Please try again.\n' + error);
             }
             return;
         }
