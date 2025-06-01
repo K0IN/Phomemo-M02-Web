@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
-import type { PrinterImage } from './logic/printerimage.ts';
-import { convertImageToBits } from './logic/imagehelper.ts';
-
+import { defaultImageConversionOptions, type PrinterImage } from './logic/printerimage.ts';
 
 import { Printer } from 'lucide-vue-next';
 
@@ -15,7 +13,7 @@ import ImageDragAndDrop from './components/ImageDragAndDrop.vue';
 import PrinterConnectionCard from './components/PrinterConnectionCard.vue';
 import ImageConversionCard from './components/ImageConversionCard.vue';
 import AppSettings from './components/AppSettings.vue';
-
+import { getWorker } from './worker/client.ts';
 
 // const isConnected = ref(false);
 // const power = ref(0);
@@ -64,10 +62,40 @@ const printerSizeWidth = 48 * 8; // 72 * 8 = 576;
 //
 // }
 
-function setImage(image: HTMLImageElement) {
-    const imageData = convertImageToBits(image, printerSizeWidth); // Assuming 48mm width in pixels
-    imageDataRef.value = imageData;
+const imageConversionOptions = ref(defaultImageConversionOptions);
+const imageRef = ref<HTMLImageElement | null>(null);
+async function setImage(image: HTMLImageElement) {
+    // imageDataRef.value = await convertImageToBits(image, printerSizeWidth, imageConversionOptions.value);
+    imageRef.value = image;
 }
+
+
+// https://developer.mozilla.org/en-US/docs/Web/API/Window/createImageBitmap
+
+const worker = getWorker();
+let abortController: AbortController | null = null;
+watch([imageRef, imageConversionOptions], async () => {
+    if (!imageRef.value) return;
+    if (abortController) {
+        abortController.abort();
+    }
+    abortController = new AbortController();
+    const localController = abortController;
+    // Clear previous image data
+    const image = await createImageBitmap(imageRef.value);
+    // Convert options from proxy/ref to plain object
+    const options = JSON.parse(JSON.stringify(imageConversionOptions.value));
+    console.log('Image loaded:', image);
+    try {
+        localController.signal.throwIfAborted();
+        const result = await worker(image, printerSizeWidth, options);
+        // Convert the result to PrinterImage type
+        localController.signal.throwIfAborted();
+        imageDataRef.value = result;
+    } catch (error) {
+        // console.error('Error converting image:', error);
+    }
+});
 
 </script>
 
@@ -88,7 +116,7 @@ function setImage(image: HTMLImageElement) {
         <div class="settings-panel">
             <PrinterConnectionCard />
             <ImageDragAndDrop @imageLoaded="(image) => setImage(image)" />
-            <ImageConversionCard />
+            <ImageConversionCard @image-conversion-options-change="(options) => imageConversionOptions = options" />
         </div>
         <div class="preview-panel">
             <ImagePreview :image="imageDataRef" style="width: 100%;" />

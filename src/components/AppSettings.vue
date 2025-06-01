@@ -64,8 +64,6 @@ const pixelsPerLine = ref(384);
                             </Label>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </PopoverContent>

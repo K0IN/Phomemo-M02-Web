@@ -1,22 +1,14 @@
-import type { PrinterImage } from "./printerimage";
+import type { ImageConversionOptions, PrinterImage } from "./printerimage";
 
-export function convertImageToBits(image: HTMLImageElement, outputWidthPixel: number, keepAspectRatio = true): PrinterImage {
-    const canvas = document.createElement('canvas');
-    const outputHeight = keepAspectRatio
-        ? Math.round(outputWidthPixel * (image.height / image.width)) : image.height;
+export async function convertImageToBits(image: ImageBitmap, outputWidthPixel: number, options: ImageConversionOptions): Promise<PrinterImage> {
+    // const canvas = new OffscreenCanvas();// document.createElement('canvas');
+    const outputHeight = Math.round(outputWidthPixel * (image.height / image.width));
 
-
-    canvas.width = outputWidthPixel;
-    canvas.height = outputHeight;
-
+    // canvas.width = outputWidthPixel;
+    // canvas.height = outputHeight;
+    const canvas = new OffscreenCanvas(outputWidthPixel, outputHeight);
     const ctx = canvas.getContext('2d');
     if (!ctx) throw new Error('Failed to get canvas context');
-
-    //   if (keepAspectRatio) {
-    //       const aspectRatio = image.width / image.height;
-    //       const newHeight = outputWidthPixel / aspectRatio;
-    //       canvas.height = Math.min(newHeight, outputHeight);
-    //   }
 
     // draw the image to the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -24,10 +16,12 @@ export function convertImageToBits(image: HTMLImageElement, outputWidthPixel: nu
 
 
     const sampledImage = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const getPixel = (x: number, y: number): boolean =>
+    const getPixel = (x: number, y: number): boolean => (
         sampledImage.data[(y * canvas.width + x) * 4] +
         sampledImage.data[(y * canvas.width + x) * 4 + 1] +
-        sampledImage.data[(y * canvas.width + x) * 4 + 2] < 384;
+        sampledImage.data[(y * canvas.width + x) * 4 + 2]) < (options.threshold * 3.0);
+
+
 
     const bits = new Uint8ClampedArray(outputHeight * outputWidthPixel / 8);
     for (let y = 0; y < outputHeight; y++) {
@@ -35,8 +29,11 @@ export function convertImageToBits(image: HTMLImageElement, outputWidthPixel: nu
             for (let bit = 0; bit < 8; bit++) {
                 const pixelX = x * 8 + bit;
                 if (pixelX >= outputWidthPixel) break; // Prevent out of bounds
-                const pixelValue = getPixel(pixelX, y) ? 1 : 0;
-                bits[y * outputWidthPixel / 8 + x] |= (pixelValue << (7 - bit));
+                const pixelValue = getPixel(pixelX, y);
+                const result = options.invert
+                    ? (pixelValue ? 0 : 1)
+                    : (pixelValue ? 1 : 0);
+                bits[y * outputWidthPixel / 8 + x] |= (result << (7 - bit));
             }
         }
     }
@@ -58,54 +55,4 @@ export function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
     });
 }
 
-/*
-working code:
-import type { PrinterImage } from "./printerimage";
 
-export function convertImageToBits(image: HTMLImageElement, outputWidth: number, keepAspectRatio = true): any {
-    const canvas = document.createElement('canvas');
-    const outputHeight = keepAspectRatio ? Math.round(outputWidth * (image.height / image.width)) : image.height;
-
-
-    canvas.width = outputWidth;
-    canvas.height = outputHeight;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('Failed to get canvas context');
-
-    if (keepAspectRatio) {
-        const aspectRatio = image.width / image.height;
-        const newHeight = outputWidth / aspectRatio;
-        canvas.height = Math.min(newHeight, outputHeight);
-    }
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-
-    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height, { colorSpace: 'srgb' });
-    const bits: number[][] = [];
-    for (let y = 0; y < outputHeight; y++) {
-        const row: number[] = [];
-        for (let x = 0; x < outputWidth; x++) {
-            const index = (y * outputWidth + x) * 4;
-            const r = imageData.data[index];
-            const g = imageData.data[index + 1];
-            const b = imageData.data[index + 2];
-            // Convert to black and white (1 bit per pixel)
-            row.push((r + g + b) < 384 ? 1 : 0); // Threshold at 384 for black
-        }
-        bits.push(row);
-    }
-
-    return bits;
-}
-
-
-export function loadImageFromUrl(url: string): Promise<HTMLImageElement> {
-    return new Promise<HTMLImageElement>((resolve, error) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = (err) => error(err);
-        img.src = url;
-    });
-}
-*/
