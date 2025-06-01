@@ -13,7 +13,10 @@ import ImageDragAndDrop from './components/ImageDragAndDrop.vue';
 import PrinterConnectionCard from './components/PrinterConnectionCard.vue';
 import ImageConversionCard from './components/ImageConversionCard.vue';
 import AppSettings from './components/AppSettings.vue';
-import { getWorker } from './worker/client.ts';
+import { useImageConvertersStore } from './stores/imageconverter.ts';
+import PrintButton from './components/PrintButton.vue';
+import { useGlobalSettingsStore } from './stores/globalSettings.ts';
+import { usePrinterStore } from './stores/printer.ts';
 
 // const isConnected = ref(false);
 // const power = ref(0);
@@ -24,43 +27,10 @@ import { getWorker } from './worker/client.ts';
 const imageDataRef = ref<PrinterImage | null>(null);
 
 const printerSizeWidth = 48 * 8; // 72 * 8 = 576;
+const converterStore = useImageConvertersStore();
+const appSettings = useGlobalSettingsStore();
+const printerStore = usePrinterStore();
 
-//
-// onMounted(async () => {
-//     const image = await loadImageFromUrl('/800.png')
-//     const imageData = convertImageToBits(image, printerSizeWidth);
-//     imageDataRef.value = imageData;
-// });
-
-// async function connectToRouter() {
-//     if (!imageDataRef.value) {
-//         console.error('No image data available to print');
-//         alert('Please load an image first.');
-//         return;
-//     }
-//
-//     const printer = new PhomemoPrinter();
-//     try {
-//         await printer.connect();
-//         isConnected.value = true;
-//         console.log('Connected to printer successfully');
-//     } catch (error) {
-//         console.error('Failed to connect to printer:', error);
-//     }
-//
-//     power.value = await printer.getBatteryLevel();
-//     firmwareVersion.value = await printer.getFirmwareVersion();
-//     serialNumber.value = await printer.getSerialNumber();
-//     paperState.value = await printer.getPaperState();
-//
-//
-//     // await printer.resetPrinter();
-//     // await printer.initializePrinter();
-//     // await printer.alignCenter();
-//     // await printer.printRasterBitImage(imageDataRef.value);
-//     // await printer.printFeedLines(4);
-//
-// }
 
 const imageConversionOptions = ref(defaultImageConversionOptions);
 const imageRef = ref<HTMLImageElement | null>(null);
@@ -69,33 +39,33 @@ async function setImage(image: HTMLImageElement) {
     imageRef.value = image;
 }
 
-
-// https://developer.mozilla.org/en-US/docs/Web/API/Window/createImageBitmap
-
-const worker = getWorker();
-let abortController: AbortController | null = null;
 watch([imageRef, imageConversionOptions], async () => {
     if (!imageRef.value) return;
-    if (abortController) {
-        abortController.abort();
-    }
-    abortController = new AbortController();
-    const localController = abortController;
     // Clear previous image data
     const image = await createImageBitmap(imageRef.value);
     // Convert options from proxy/ref to plain object
     const options = JSON.parse(JSON.stringify(imageConversionOptions.value));
-    console.log('Image loaded:', image);
     try {
-        localController.signal.throwIfAborted();
-        const result = await worker(image, printerSizeWidth, options);
+        const result = await converterStore.convertImage(image, printerSizeWidth, options);
         // Convert the result to PrinterImage type
-        localController.signal.throwIfAborted();
         imageDataRef.value = result;
-    } catch (error) {
-        // console.error('Error converting image:', error);
+    } catch {
     }
 });
+
+async function printImage() {
+    if (!imageDataRef.value) {
+        console.error('No image data to print');
+        return;
+    }
+    try {
+        await printerStore.printImage(imageDataRef.value);
+    } catch (error) {
+        console.error('Failed to print image:', error);
+    }
+
+
+}
 
 </script>
 
@@ -114,64 +84,16 @@ watch([imageRef, imageConversionOptions], async () => {
             </div>
         </header>
         <div class="settings-panel">
-            <PrinterConnectionCard />
+            <PrinterConnectionCard :show-all-bluetooth-devices="appSettings.settings.showAllBluetoothDevices" />
             <ImageDragAndDrop @imageLoaded="(image) => setImage(image)" />
             <ImageConversionCard @image-conversion-options-change="(options) => imageConversionOptions = options" />
         </div>
         <div class="preview-panel">
-            <ImagePreview :image="imageDataRef" style="width: 100%;" />
+            <ImagePreview :image="imageDataRef" :original-image="imageRef" style="width: 100%;" />
+            <PrintButton style="width: 100%;" :image-selected="!!imageDataRef" :connected="printerStore.isConnected"
+                @print="printImage" />
         </div>
     </main>
-
-    <!--
-        <Button>Click me</Button>
-        <Sheet>
-            <SheetTrigger>Open</SheetTrigger>
-            <SheetContent>
-                <SheetHeader>
-                    <SheetTitle>Are you absolutely sure?</SheetTitle>
-                    <SheetDescription>
-                        This action cannot be undone. This will permanently delete your account
-                        and remove your data from our servers.
-                    </SheetDescription>
-                </SheetHeader>
-            </SheetContent>
-        </Sheet>
-
-        <Button variant="outline" @click="() => {
-            toast('Event has been created', {
-                description: 'Sunday, December 03, 2023 at 9:00 AM',
-                action: {
-                    label: 'Undo',
-                    onClick: () => console.log('Undo'),
-                },
-            })
-        }">
-            Add to calendar
-        </Button>
-
-
-        <button @click="connectToRouter">Connect to Router</button>
-        <div v-if="isConnected">
-            <p>Printer is connected.</p>
-            <p>Power: {{ power }}</p>
-            <p>Firmware Version: {{ firmwareVersion }}</p>
-            <p>Serial Number: {{ serialNumber }}</p>
-            <p>Paper State: {{ paperState }}</p>
-
-        </div>
-
-        <p v-else>Printer is not connected.</p>
-        <div v-if="imageDataRef">
-            <p>Image Data:</p>
-            <p>Width: {{ imageDataRef.width }} px</p>
-            <p>Height: {{ imageDataRef.height }} px</p>
-            <p>Bits Length: {{ imageDataRef.bits.length }} bytes</p>
-            <br>
-            <ImagePreview :image="imageDataRef" />
-        </div>
-
-        -->
 
     <Toaster />
 </template>

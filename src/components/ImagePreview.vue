@@ -5,14 +5,17 @@ import Card from './ui/card/Card.vue';
 import CardHeader from './ui/card/CardHeader.vue';
 import CardTitle from './ui/card/CardTitle.vue';
 import CardContent from './ui/card/CardContent.vue';
+import TabsContent from './ui/tabs/TabsContent.vue';
+import TabsList from './ui/tabs/TabsList.vue';
+import Tabs from './ui/tabs/Tabs.vue';
+import TabsTrigger from './ui/tabs/TabsTrigger.vue';
 
 const props = defineProps<{
     image: PrinterImage | null; // Optional image prop
+    originalImage: HTMLImageElement | null; // Optional original image prop
 }>();
 
 const canvasRef = ref<HTMLCanvasElement | null>(null);
-
-
 
 // on prop change
 watch([canvasRef, props], async () => {
@@ -75,7 +78,23 @@ watch([canvasRef, props], async () => {
                 bytes</p>
 -->
 
-            <canvas ref="canvasRef"></canvas>
+            <Tabs default-value="account" class="w-[400px]">
+                <TabsList>
+                    <TabsTrigger value="account">
+                        Preview
+                    </TabsTrigger>
+                    <TabsTrigger value="password">
+                        Original Image
+                    </TabsTrigger>
+                </TabsList>
+                <TabsContent value="account" style="width: 100%; height: 100%;">
+                    <canvas ref="canvasRef"></canvas>
+                </TabsContent>
+                <TabsContent value="password">
+                    <img :src="props.originalImage?.src" alt="Original Image" style="outline: 2px solid #666;" />
+                </TabsContent>
+            </Tabs>
+
         </CardContent>
     </Card>
 </template>

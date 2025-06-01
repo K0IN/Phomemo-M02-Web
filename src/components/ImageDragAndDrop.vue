@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import Card from './ui/card/Card.vue';
-import { Badge, BadgeCheck, Image as ImageIcon, Upload } from 'lucide-vue-next';
+import { Image as ImageIcon, Upload } from 'lucide-vue-next';
 import CardHeader from './ui/card/CardHeader.vue';
 import CardTitle from './ui/card/CardTitle.vue';
 import CardContent from './ui/card/CardContent.vue';
@@ -65,8 +65,6 @@ function onDrop(e: DragEvent) {
         <CardHeader class="flex flex-row items-center">
             <ImageIcon class="mr-2" />
             <CardTitle>Select Image</CardTitle>
-            <BadgeCheck v-if="hasImage" class="ml-auto" variant="outline">Image Selected</BadgeCheck>
-            <Badge v-else class="ml-auto" variant="outline">No Image</Badge>
         </CardHeader>
         <CardContent>
             <label class="file-label cursor-pointer" tabindex="0">

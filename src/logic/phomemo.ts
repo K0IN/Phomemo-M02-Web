@@ -4,15 +4,11 @@ export class PhomemoPrinter {
     private port?: SerialPort;
     private reader?: ReadableStreamDefaultReader<Uint8Array>;
     private writer?: WritableStreamDefaultWriter<Uint8Array>;
-    constructor() {
-        if (!navigator.serial) {
-            throw new Error('Web Serial API is not supported in this browser.');
-        }
-    }
-
-    async connect(): Promise<void> {
+    async connect(showAllBluetoothDevices = false): Promise<void> {
         this.port = await navigator.serial.requestPort({
-            filters: [{ bluetoothServiceClassId: '00001101-0000-1000-8000-00805f9b34fb' }],
+            filters: showAllBluetoothDevices
+                ? []
+                : [{ bluetoothServiceClassId: '00001101-0000-1000-8000-00805f9b34fb' }],
         });
         await this.port.open({ baudRate: 9600 });
         this.writer = this.port.writable?.getWriter();
@@ -107,7 +103,7 @@ export class PhomemoPrinter {
         console.log(`Printed ${num} feed lines`);
     }
 
-    async printRasterBitImage(image: PrinterImage): Promise<void> {
+    async printImage(image: PrinterImage): Promise<void> {
         if (!this.port || !this.writer) throw new Error('Not connected to printer');
         if (image.width % 8 !== 0) {
             throw new Error('Image width must be a multiple of 8');

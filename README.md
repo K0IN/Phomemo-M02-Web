@@ -1,3 +1,3 @@
 # Phomemo Web Printer
 
-<https://www.shadcn-vue.com/>
+*WIP* docs follow soon.

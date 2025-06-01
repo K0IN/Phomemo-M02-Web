@@ -2,7 +2,7 @@
 import {
     Card,
     CardContent,
-} from '@/components/ui/card'
+} from '@/components/ui/card';
 
 import { Wifi, WifiOff, Loader2, BatteryFull, BatteryLow, BatteryMedium, Battery } from 'lucide-vue-next';
 
@@ -16,13 +16,16 @@ import Tooltip from './ui/tooltip/Tooltip.vue';
 import TooltipTrigger from './ui/tooltip/TooltipTrigger.vue';
 import TooltipContent from './ui/tooltip/TooltipContent.vue';
 
-const isLoading = ref(false);
-
-const printer = usePrinterStore();
+const props = defineProps<{
+    showAllBluetoothDevices?: boolean; // Optional prop to show all Bluetooth devices
+}>();
 
 const emit = defineEmits<{
     (e: 'connect'): void;
 }>();
+
+const isLoading = ref(false);
+const printer = usePrinterStore();
 
 async function connectToPrinter() {
     isLoading.value = true;
@@ -31,7 +34,7 @@ async function connectToPrinter() {
             await printer.disconnectPrinter();
         } else {
             try {
-                await printer.connectPrinter();
+                await printer.connectPrinter(props.showAllBluetoothDevices);
                 emit('connect');
             } catch (error) {
                 console.error('Failed to connect to printer:', error);
@@ -46,7 +49,6 @@ async function connectToPrinter() {
         isLoading.value = false;
     }
 }
-
 </script>
 
 <template>
