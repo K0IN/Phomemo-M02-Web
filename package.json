@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "build": "run-p type-check \"build-only {@}\" --",
+    "build-github-pages": "build -- --base=/Phomemo-M02-Web/",
     "lint": "run-s lint:*",
     "build-only": "vite build",
     "dev": "vite",

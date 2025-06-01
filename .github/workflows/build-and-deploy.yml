@@ -24,11 +24,9 @@ jobs:
           cache: 'npm'
 
       - name: Install and Build
-        env:
-          NODE_ENV: production
         run: |
           npm install
-          npm run build
+          npm run build-github-pages
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
