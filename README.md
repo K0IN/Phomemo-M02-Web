@@ -41,3 +41,7 @@ Needed Features:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+
+## Credits
+
+The Printer driver is based on [theacodes python implementation](https://github.com/theacodes/phomemo_m02s).
