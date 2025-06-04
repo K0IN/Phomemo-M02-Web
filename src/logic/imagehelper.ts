@@ -1,10 +1,8 @@
 import type { ImageConversionOptions, PrinterImage } from "./printerimage";
 
 export async function convertImageToBits(image: ImageBitmap, outputWidthPixel: number, options: ImageConversionOptions): Promise<PrinterImage> {
-    // Always fix the output width, calculate height to preserve aspect ratio after rotation
     let outputHeight: number;
     if (options.rotation === 90 || options.rotation === 270) {
-        // For 90/270, width and height are swapped for aspect ratio calculation
         outputHeight = Math.round(outputWidthPixel * (image.width / image.height));
     } else {
         outputHeight = Math.round(outputWidthPixel * (image.height / image.width));
@@ -21,7 +19,6 @@ export async function convertImageToBits(image: ImageBitmap, outputWidthPixel: n
         ctx.save();
         ctx.translate(canvas.width / 2, canvas.height / 2);
         ctx.rotate(options.rotation * Math.PI / 180);
-        // Draw the image so it fits the fixed width and calculated height
         if (options.rotation === 90 || options.rotation === 270) {
             ctx.drawImage(image, -canvas.height / 2, -canvas.width / 2, canvas.height, canvas.width);
         } else {

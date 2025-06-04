@@ -18,15 +18,8 @@ import PrintButton from './components/PrintButton.vue';
 import { useGlobalSettingsStore } from './stores/globalSettings.ts';
 import { usePrinterStore } from './stores/printer.ts';
 
-// const isConnected = ref(false);
-// const power = ref(0);
-// const firmwareVersion = ref('');
-// const serialNumber = ref(0);
-// const paperState = ref(0);
-
 const imageDataRef = ref<PrinterImage | null>(null);
 
-const printerSizeWidth = 48 * 8; // 72 * 8 = 576;
 const converterStore = useImageConvertersStore();
 const appSettings = useGlobalSettingsStore();
 const printerStore = usePrinterStore();
@@ -40,13 +33,10 @@ async function setImage(image: HTMLImageElement) {
 
 watch([imageRef, imageConversionOptions], async () => {
     if (!imageRef.value) return;
-    // Clear previous image data
     const image = await createImageBitmap(imageRef.value);
-    // Convert options from proxy/ref to plain object
     const options = JSON.parse(JSON.stringify(imageConversionOptions.value));
     try {
-        const result = await converterStore.convertImage(image, printerSizeWidth, options);
-        // Convert the result to PrinterImage type
+        const result = await converterStore.convertImage(image, appSettings.settings.pixelPerLine, options);
         imageDataRef.value = result;
     } catch {
     }
@@ -63,7 +53,6 @@ async function printImage() {
         console.error('Failed to print image:', error);
     }
 }
-
 </script>
 
 <template>
