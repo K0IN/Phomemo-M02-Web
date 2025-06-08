@@ -1,0 +1,10 @@
+{
+  "name": "phamemowebprinter",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@bytecodealliance/jco": "~1.11.2",
+    "@bytecodealliance/componentize-js": "~0.18.2"
+  }
+}

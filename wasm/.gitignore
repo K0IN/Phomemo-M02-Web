@@ -1,0 +1,5 @@
+out/
+.zig-cache
+.cache
+*.o
+*.wasm
