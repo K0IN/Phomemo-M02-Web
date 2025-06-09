@@ -21,6 +21,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "comlink": "^4.4.2",
+    "image-converter-wasm": "file:wasm",
     "lucide-vue-next": "^0.511.0",
     "pinia": "^3.0.1",
     "register-service-worker": "^1.7.2",

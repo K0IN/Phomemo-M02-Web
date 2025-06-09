@@ -1,8 +1,13 @@
 {
-  "name": "phamemowebprinter",
+  "name": "image-converter-wasm",
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "files": [
+    "out/"
+  ],
+  "main": "out/main-component.js",
+  "types": "out/main-component.d.ts",
   "dependencies": {
     "@bytecodealliance/jco": "~1.11.2",
     "@bytecodealliance/componentize-js": "~0.18.2"

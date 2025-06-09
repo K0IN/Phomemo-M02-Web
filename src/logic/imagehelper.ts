@@ -1,6 +1,12 @@
 import type { ImageConversionOptions, PrinterImage } from "./printerimage";
 
+import { $init, runme } from 'image-converter-wasm';
+
 export async function convertImageToBits(image: ImageBitmap, outputWidthPixel: number, options: ImageConversionOptions): Promise<PrinterImage> {
+    await $init;
+    runme();
+
+
     let outputHeight: number;
     if (options.rotation === 90 || options.rotation === 270) {
         outputHeight = Math.round(outputWidthPixel * (image.width / image.height));

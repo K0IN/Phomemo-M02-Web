@@ -3,9 +3,10 @@ package example:host;
 world host {
   import env: interface {
     print: func(param: u32);
+    printstr: func(param: string);
   }
 
-  export add: func(a: u32, b: u32) -> u32;
-  export malloc: func(length: u32) -> u32;
-  export free: func(buf: u32);
+  // export add: func(a: u32, b: u32) -> u32;
+  // export malloc: func(length: u32) -> u32;
+  export runme: func();
 }
