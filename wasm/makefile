@@ -9,9 +9,18 @@ main-component.wasm: main.wasm main.wit
 node_modules:
 	npm install
 
-out/main-component.js: main-component.wasm node_modules src/environment.js
+out/src/environment.js: src/environment.js
+	mkdir -p out/src
+	cp src/environment.js out/src/environment.js
+
+out/src/types.js: ./types.js
+	mkdir -p out/src
+	cp types.js out/src/types.js
+
+
+out/main-component.js: main-component.wasm node_modules out/src/environment.js out/src/types.js
  	# --async-mode jspi
-	npx jco transpile main-component.wasm -o out --no-nodejs-compat --tla-compat --map env=./src/environment.js --optimize 0S 
+	npx jco transpile main-component.wasm -o out --no-nodejs-compat --tla-compat --map env=./src/environment.js --optimize 0S --map example:host/types=./src/types.js --tracing --no-wasi-shim
 
 build: main-component.wasm out/main-component.js
 

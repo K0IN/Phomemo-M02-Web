@@ -1,9 +1,18 @@
 package example:host;
 
+interface types {
+  resource y;
+}
+
 world host {
+  use types.{y};
+
   import env: interface {
+  use types.{y};
     print: func(param: u32);
     printstr: func(param: string);
+    createnode: func() -> y;
+    printnode: func(node: borrow<y>);
   }
 
   // export add: func(a: u32, b: u32) -> u32;

@@ -3,9 +3,11 @@ import type { ImageConversionOptions, PrinterImage } from "./printerimage";
 import { $init, runme } from 'image-converter-wasm';
 
 export async function convertImageToBits(image: ImageBitmap, outputWidthPixel: number, options: ImageConversionOptions): Promise<PrinterImage> {
+    console.log(`Converting image to bits with options:`, options);
     await $init;
+    console.log(`Awaited wasm initialization`);
     runme();
-
+    console.log(`Wasm runme completed`);
 
     let outputHeight: number;
     if (options.rotation === 90 || options.rotation === 270) {
