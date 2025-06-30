@@ -1,11 +1,5 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
-
-import { defaultImageConversionOptions, type PrinterImage } from './logic/printerimage.ts';
-
-import { Printer } from 'lucide-vue-next';
-
-import { Toaster } from '@/components/ui/sonner'
 import 'vue-sonner/style.css'
 
 import ImagePreview from './components/ImagePreview.vue';
@@ -13,10 +7,21 @@ import ImageDragAndDrop from './components/ImageDragAndDrop.vue';
 import PrinterConnectionCard from './components/PrinterConnectionCard.vue';
 import ImageConversionCard from './components/ImageConversionCard.vue';
 import AppSettings from './components/AppSettings.vue';
-import { useImageConvertersStore } from './stores/imageconverter.ts';
 import PrintButton from './components/PrintButton.vue';
+
+import { Printer } from 'lucide-vue-next';
+import { Toaster } from '@/components/ui/sonner'
+
+import { defaultImageConversionOptions, type PrinterImage } from './logic/printerimage.ts';
+import { useImageConvertersStore } from './stores/imageconverter.ts';
 import { useGlobalSettingsStore } from './stores/globalSettings.ts';
 import { usePrinterStore } from './stores/printer.ts';
+import { useEventListener } from '@vueuse/core';
+
+useEventListener(window, "beforeinstallprompt", (event) => {
+    event.preventDefault();
+    console.warn("beforeinstallprompt event prevented");
+});
 
 const imageDataRef = ref<PrinterImage | null>(null);
 
@@ -53,6 +58,7 @@ async function printImage() {
         console.error('Failed to print image:', error);
     }
 }
+
 </script>
 
 <template>

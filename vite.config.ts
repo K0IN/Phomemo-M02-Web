@@ -13,22 +13,43 @@ export default defineConfig({
         tailwindcss(),
         vueDevTools(),
         VitePWA({
-            registerType: 'autoUpdate', workbox: {
+            registerType: 'autoUpdate',
+            workbox: {
                 clientsClaim: true,
-                skipWaiting: true
+                skipWaiting: true,
             },
-            // devOptions: {
-            //     enabled: true
-            // },
+
+            devOptions: {
+                enabled: true
+            },
             injectRegister: 'auto',
             filename: 'sw.js',
             manifest: {
-                name: 'My Vue App',
-                short_name: 'VueApp',
-                description: 'A Vue.js application with PWA support',
+                name: 'Phomemo Printer',
+                short_name: 'Phomemo',
+                description: 'Print images with your Phomemo M02 printer',
                 theme_color: '#ffffff',
+                start_url: '/',
+                display: 'standalone',
+                scope: "/",
+                file_handlers: [
+                    {
+                        action: '/print',
+                        accept: {
+                            'image/*': ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff']
+                        }
+                    }
+                ],
+                icons: [
+                    {
+                        src: 'favicon.svg',
+                        sizes: '192x192',
+                        type: 'image/svg+xml',
+                        purpose: 'any'
+                    }
+                ]
             },
-            includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+            includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'masked-icon.svg'],
             srcDir: 'src',
             minify: true,
         })
