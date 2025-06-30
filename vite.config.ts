@@ -20,7 +20,7 @@ function getBaseUrl() {
 export default defineConfig({
     plugins: [
         vue({}),
-        // tailwindcss(),
+        tailwindcss(),
         vueDevTools(),
         VitePWA({
             registerType: 'autoUpdate',
@@ -42,6 +42,8 @@ export default defineConfig({
                 start_url: getBaseUrl(),
                 display: 'standalone',
                 scope: getBaseUrl(),
+                orientation: 'portrait',
+                //  protocol_handlers
                 file_handlers: [
                     {
                         action: getBaseUrl() + 'file-handler',
