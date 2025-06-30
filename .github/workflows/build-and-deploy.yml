@@ -3,7 +3,7 @@ name: Build frontend
 on:
     push:
         branches:
-            - 'main'
+            - '*'
     schedule:
         - cron: '39 12 * * 6'
 
