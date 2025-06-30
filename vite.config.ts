@@ -20,7 +20,7 @@ function getBaseUrl() {
 export default defineConfig({
     plugins: [
         vue({}),
-        tailwindcss(),
+        // tailwindcss(),
         vueDevTools(),
         VitePWA({
             registerType: 'autoUpdate',
@@ -55,6 +55,19 @@ export default defineConfig({
                         }
                     }
                 ],
+                share_target: {
+                    action: getBaseUrl() + 'share-target',
+                    method: 'POST',
+                    enctype: 'multipart/form-data',
+                    params: {
+                        files: [
+                            {
+                                name: 'image',
+                                accept: ['image/*', '.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff', '.svg']
+                            }
+                        ]
+                    }
+                },
                 icons: [
                     {
                         src: 'favicon.svg',
@@ -74,5 +87,5 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         },
     },
-    base: process.env.APP_BASE_URL || undefined,
+    base: getBaseUrl(),
 })
