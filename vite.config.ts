@@ -6,6 +6,16 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import { VitePWA } from 'vite-plugin-pwa'
 import tailwindcss from '@tailwindcss/vite'
 
+function getBaseUrl() {
+    if (!process.env.APP_BASE_URL) {
+        return '/';
+    }
+
+    return process.env.APP_BASE_URL.endsWith('/')
+        ? process.env.APP_BASE_URL
+        : process.env.APP_BASE_URL + '/';
+}
+
 // https://vite.dev/config/
 export default defineConfig({
     plugins: [
@@ -29,14 +39,19 @@ export default defineConfig({
                 short_name: 'Phomemo',
                 description: 'Print images with your Phomemo M02 printer',
                 theme_color: '#ffffff',
-                start_url: process.env.APP_BASE_URL || '/',
+                start_url: getBaseUrl(),
                 display: 'standalone',
-                scope: process.env.APP_BASE_URL || '/',
+                scope: getBaseUrl(),
                 file_handlers: [
                     {
-                        action: '/print',
+                        action: getBaseUrl() + 'file-handler',
                         accept: {
-                            'image/*': ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.bmp', '.tiff']
+                            'image/*': [
+                                '.jpg', '.jpeg',
+                                '.png', '.gif',
+                                '.webp', '.bmp',
+                                '.tiff', '.svg'
+                            ],
                         }
                     }
                 ],
