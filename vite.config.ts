@@ -29,9 +29,9 @@ export default defineConfig({
                 short_name: 'Phomemo',
                 description: 'Print images with your Phomemo M02 printer',
                 theme_color: '#ffffff',
-                start_url: '/',
+                start_url: process.env.APP_BASE_URL || '/',
                 display: 'standalone',
-                scope: "/",
+                scope: process.env.APP_BASE_URL || '/',
                 file_handlers: [
                     {
                         action: '/print',
