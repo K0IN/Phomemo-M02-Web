@@ -79,19 +79,16 @@ export class PhomemoPrinter {
     async initializePrinter(): Promise<void> {
         if (!this.port || !this.writer) throw new Error('Not connected to printer');
         await this.writer.write(new Uint8Array([0x1B, 0x40])); // ESC @
-        console.log('Printer initialized');
     }
 
     async resetPrinter(): Promise<void> {
         if (!this.port || !this.writer) throw new Error('Not connected to printer');
         await this.writer.write(new Uint8Array([0x1B, 0x40, 0x02])); // ESC @ 0x02
-        console.log('Printer reset');
     }
 
     async alignCenter(): Promise<void> {
         if (!this.port || !this.writer) throw new Error('Not connected to printer');
         await this.writer.write(new Uint8Array([0x1B, 0x61, 0x01])); // ESC a 1
-        console.log('Printer aligned to center');
     }
 
     async printFeedLines(num: number): Promise<void> {
@@ -100,7 +97,6 @@ export class PhomemoPrinter {
             throw new Error('Number of lines must be between 0 and 255');
         }
         await this.writer.write(new Uint8Array([0x1B, 0x64, num])); // ESC d num
-        console.log(`Printed ${num} feed lines`);
     }
 
     async printImage(image: PrinterImage): Promise<void> {
@@ -126,6 +122,5 @@ export class PhomemoPrinter {
         imageData.set(header, 0);
         imageData.set(image.bits, header.length);
         await this.writer.write(imageData);
-        console.log('Raster bit image printed');
     }
 }

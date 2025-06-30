@@ -1,4 +1,4 @@
-[*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,css,scss,sass,less,styl}]
+[*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,vue,css,scss,sass,less,styl,json,html,md,yml,yaml,xml,graphql,gql,txt}]
 charset = utf-8
 indent_size = 4
 indent_style = space
