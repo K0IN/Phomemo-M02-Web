@@ -42,7 +42,7 @@ export default defineConfig({
                 theme_color: '#ffffff',
                 start_url: getBaseUrl(),
                 display: 'standalone',
-                scope: getBaseUrl(),
+                scope: '/',
                 orientation: 'portrait',
                 //  protocol_handlers
                 share_target: {
