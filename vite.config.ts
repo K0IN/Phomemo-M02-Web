@@ -7,11 +7,14 @@ import { VitePWA } from 'vite-plugin-pwa'
 import tailwindcss from '@tailwindcss/vite'
 
 function getBaseUrl() {
-    // Use '/' for development, '/Phomemo-M02-Web/' for production (e.g., GitHub Pages)
-    if (process.env.NODE_ENV === 'production') {
-        return '/Phomemo-M02-Web/';
-    }
-    return '/';
+    return '/'
+    //if (!process.env.APP_BASE_URL) {
+    //    return '/';
+    //}
+    //
+    //return process.env.APP_BASE_URL.endsWith('/')
+    //    ? process.env.APP_BASE_URL
+    //    : process.env.APP_BASE_URL + '/';
 }
 
 // https://vite.dev/config/
@@ -38,13 +41,13 @@ export default defineConfig({
                 short_name: 'Phomemo',
                 description: 'Print images with your Phomemo M02 printer',
                 theme_color: '#ffffff',
-                start_url: process.env.NODE_ENV === 'production' ? '/Phomemo-M02-Web/' : '/',
+                start_url: getBaseUrl(),
                 display: 'standalone',
-                scope: process.env.NODE_ENV === 'production' ? '/Phomemo-M02-Web/' : '/',
+                scope: getBaseUrl(),
                 orientation: 'portrait',
                 //  protocol_handlers
                 share_target: {
-                    action: (process.env.NODE_ENV === 'production' ? '/Phomemo-M02-Web/' : '/') + 'share-target',
+                    action: getBaseUrl() + 'share-target',
                     method: 'POST',
                     enctype: 'multipart/form-data',
                     params: {
