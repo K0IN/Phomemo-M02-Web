@@ -7,7 +7,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import tailwindcss from '@tailwindcss/vite'
 
 function getBaseUrl() {
-    return '/Phomemo-M02-Web'
+    return '/Phomemo-M02-Web/'
     //if (!process.env.APP_BASE_URL) {
     //    return '/';
     //}
@@ -41,9 +41,9 @@ export default defineConfig({
                 short_name: 'Phomemo',
                 description: 'Print images with your Phomemo M02 printer',
                 theme_color: '#ffffff',
+                scope: getBaseUrl(),
                 start_url: getBaseUrl(),
                 display: 'standalone',
-                scope: getBaseUrl(),
                 orientation: 'portrait',
                 //  protocol_handlers
                 share_target: {
