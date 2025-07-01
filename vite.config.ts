@@ -24,16 +24,17 @@ export default defineConfig({
         vueDevTools(),
         VitePWA({
             registerType: 'autoUpdate',
-            workbox: {
-                clientsClaim: true,
-                skipWaiting: true,
-            },
+            strategies: 'injectManifest',
+
+            injectRegister: 'auto',
+            srcDir: 'src',
+            filename: 'serviceworker.ts',
 
             devOptions: {
-                enabled: true
+                enabled: true,
+                type: 'module',
             },
-            injectRegister: 'auto',
-            filename: 'sw.js',
+
             manifest: {
                 name: 'Phomemo Printer',
                 short_name: 'Phomemo',
@@ -44,19 +45,6 @@ export default defineConfig({
                 scope: getBaseUrl(),
                 orientation: 'portrait',
                 //  protocol_handlers
-                file_handlers: [
-                    {
-                        action: getBaseUrl() + 'file-handler',
-                        accept: {
-                            'image/*': [
-                                '.jpg', '.jpeg',
-                                '.png', '.gif',
-                                '.webp', '.bmp',
-                                '.tiff', '.svg'
-                            ],
-                        }
-                    }
-                ],
                 share_target: {
                     action: getBaseUrl() + 'share-target',
                     method: 'POST',
@@ -80,8 +68,8 @@ export default defineConfig({
                 ]
             },
             includeAssets: ['favicon.svg', 'apple-touch-icon.png', 'masked-icon.svg'],
-            srcDir: 'src',
             minify: true,
+
         })
     ],
     resolve: {

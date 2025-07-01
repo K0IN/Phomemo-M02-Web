@@ -51,7 +51,9 @@
         "vite": "^6.2.4",
         "vite-plugin-pwa": "^1.0.0",
         "vite-plugin-vue-devtools": "^7.7.2",
-        "vue-tsc": "^2.2.8"
+        "vue-tsc": "^2.2.8",
+        "workbox-core": "^7.3.0",
+        "workbox-precaching": "^7.3.0"
     },
     "type": "module"
 }
