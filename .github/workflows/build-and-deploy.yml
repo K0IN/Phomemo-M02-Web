@@ -28,7 +28,7 @@ jobs:
                   npm install
                   npm run build-github-pages
               env:
-                  APP_BASE_URL: Phomemo-M02-Web/
+                  APP_BASE_URL: /Phomemo-M02-Web/
 
             - name: Deploy
               uses: peaceiris/actions-gh-pages@v4

@@ -7,14 +7,13 @@ import { VitePWA } from 'vite-plugin-pwa'
 import tailwindcss from '@tailwindcss/vite'
 
 function getBaseUrl() {
-    return '/Phomemo-M02-Web/'
-    //if (!process.env.APP_BASE_URL) {
-    //    return '/';
-    //}
-    //
-    //return process.env.APP_BASE_URL.endsWith('/')
-    //    ? process.env.APP_BASE_URL
-    //    : process.env.APP_BASE_URL + '/';
+    if (!process.env.APP_BASE_URL) {
+        return '/';
+    }
+
+    return process.env.APP_BASE_URL.endsWith('/')
+        ? process.env.APP_BASE_URL
+        : process.env.APP_BASE_URL + '/';
 }
 
 // https://vite.dev/config/
