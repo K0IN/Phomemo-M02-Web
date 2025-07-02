@@ -1,5 +1,6 @@
 import { cleanupOutdatedCaches, precacheAndRoute } from 'workbox-precaching'
 import { clientsClaim } from 'workbox-core'
+import { registerRoute } from 'workbox-routing';
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -11,11 +12,6 @@ cleanupOutdatedCaches()
 precacheAndRoute(self.__WB_MANIFEST)
 
 
-self.addEventListener('fetch', event => {
-    if (event.request.url.endsWith('/share-target') && event.request.method === 'POST') {
-        event.respondWith(handleShareTarget(event.request, event));
-    }
-});
 
 async function handleShareTarget(request: Request, event: FetchEvent) {
     const formData = await request.formData();
@@ -25,19 +21,27 @@ async function handleShareTarget(request: Request, event: FetchEvent) {
         return new Response('Invalid file', { status: 400 });
     }
 
-    // Check if the file is an image
     if (!file.type.startsWith('image/')) {
         return new Response('File is not an image', { status: 400 });
     }
 
-    // Process the image file as needed
     console.log('Received image file:', file.name, file.size, file.type);
 
-    event.waitUntil(self.clients.matchAll({ includeUncontrolled: true, type: 'all' }).then(clients => {
-        return Promise.all(clients.map(client => {
+    event.waitUntil(self.clients.matchAll({ includeUncontrolled: true, type: 'window' }).then(clients => {
+
+        return Promise.all(clients.map(async client => {
+            await new Promise(resolve => setTimeout(resolve, 5_000)); // Wait for 1 second to ensure the client is ready
+
+            if (client.visibilityState === 'visible') {
+                await client.focus();
+            }
             return client.postMessage({ type: 'image_shared', file });
         }));
     }));
 
     return Response.redirect(request.url.replace('/share-target', ''), 303);// https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/share_target
 }
+
+registerRoute(
+    ({ request }) => request.url.endsWith('/share-target'),
+    async ({ event, request }) => handleShareTarget(request, event as FetchEvent), 'POST');
