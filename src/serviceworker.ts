@@ -13,11 +13,11 @@ precacheAndRoute(self.__WB_MANIFEST)
 
 self.addEventListener('fetch', event => {
     if (event.request.url.endsWith('/share-target') && event.request.method === 'POST') {
-        event.respondWith(handleShareTarget(event.request));
+        event.respondWith(handleShareTarget(event.request, event));
     }
 });
 
-async function handleShareTarget(request: Request) {
+async function handleShareTarget(request: Request, event: FetchEvent) {
     const formData = await request.formData();
 
     const file = formData.get('image');
@@ -33,11 +33,11 @@ async function handleShareTarget(request: Request) {
     // Process the image file as needed
     console.log('Received image file:', file.name, file.size, file.type);
 
-
-    const allClients = await self.clients.matchAll({ includeUncontrolled: false, type: 'window' });
-    for (const client of allClients) {
-        client.postMessage({ type: 'image_shared', file });
-    }
+    event.waitUntil(self.clients.matchAll({ includeUncontrolled: true, type: 'window' }).then(clients => {
+        return Promise.all(clients.map(client => {
+            return client.postMessage({ type: 'image_shared', file: { name: file.name, size: file.size, type: file.type } });
+        }));
+    }));
 
     return Response.redirect(request.url.replace('/share-target', ''), 303);// https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/share_target
 }
