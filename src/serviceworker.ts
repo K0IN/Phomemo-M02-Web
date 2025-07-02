@@ -39,5 +39,5 @@ async function handleShareTarget(request: Request) {
         client.postMessage({ type: 'image_shared', file });
     }
 
-    return new Response('Share target processed', { status: 200 }); // https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/share_target
+    return Response.redirect(request.url.replace('/share-target', ''), 303);// https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Manifest/Reference/share_target
 }
