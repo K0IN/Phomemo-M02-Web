@@ -33,9 +33,9 @@ async function handleShareTarget(request: Request, event: FetchEvent) {
     // Process the image file as needed
     console.log('Received image file:', file.name, file.size, file.type);
 
-    event.waitUntil(self.clients.matchAll({ includeUncontrolled: true, type: 'window' }).then(clients => {
+    event.waitUntil(self.clients.matchAll({ includeUncontrolled: true, type: 'all' }).then(clients => {
         return Promise.all(clients.map(client => {
-            return client.postMessage({ type: 'image_shared', file: { name: file.name, size: file.size, type: file.type } });
+            return client.postMessage({ type: 'image_shared', file });
         }));
     }));
 
