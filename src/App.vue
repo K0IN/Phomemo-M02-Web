@@ -16,12 +16,8 @@ import { defaultImageConversionOptions, type PrinterImage } from './logic/printe
 import { useImageConvertersStore } from './stores/imageconverter.ts';
 import { useGlobalSettingsStore } from './stores/globalSettings.ts';
 import { usePrinterStore } from './stores/printer.ts';
-import { useEventListener } from '@vueuse/core';
 
-useEventListener(window, "beforeinstallprompt", (event) => {
-    event.preventDefault();
-    console.warn("beforeinstallprompt event prevented");
-});
+
 
 const imageDataRef = ref<PrinterImage | null>(null);
 

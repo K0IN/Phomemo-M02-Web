@@ -12,8 +12,11 @@ import { Settings } from 'lucide-vue-next'
 import Separator from './ui/separator/Separator.vue'
 import Switch from './ui/switch/Switch.vue'
 import { useGlobalSettingsStore } from '@/stores/globalSettings'
+import { usePwaInstallStore } from '@/stores/pwainstall'
 
 const globalSettings = useGlobalSettingsStore();
+const pwaInstall = usePwaInstallStore();
+
 </script>
 
 <template>
@@ -33,7 +36,9 @@ const globalSettings = useGlobalSettingsStore();
                         Configure your printer parameters
                     </p>
                 </div>
+
                 <Separator />
+
                 <div class="flex flex-col gap-4">
                     <div>
                         <Label for="pixelsPerLine">Pixels per Line</Label>
@@ -69,6 +74,14 @@ const globalSettings = useGlobalSettingsStore();
                             </Label>
                         </div>
                     </div>
+
+                    <Separator v-if="pwaInstall.isInstallAvailable" />
+
+                    <Button size="sm" variant="default" @click="pwaInstall.installPwa()"
+                        v-if="pwaInstall.isInstallAvailable">
+                        Install Web App
+                    </Button>
+
                 </div>
             </div>
         </PopoverContent>
