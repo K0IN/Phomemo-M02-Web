@@ -1,0 +1,11 @@
+<html>
+
+<body>
+    <!-- call localhost:1532/share-target with an image in body -->
+    <form id="share-form" action="http://localhost:5173/share-target" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Share</button>
+    </form>
+</body>
+
+</html>
