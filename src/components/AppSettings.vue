@@ -11,7 +11,7 @@ import { Settings } from 'lucide-vue-next'
 
 import Separator from './ui/separator/Separator.vue'
 import Switch from './ui/switch/Switch.vue'
-import { useGlobalSettingsStore } from '@/stores/globalSettings'
+import { useGlobalSettingsStore } from '@/stores/globalsettings'
 import { usePwaInstallStore } from '@/stores/pwainstall'
 
 const globalSettings = useGlobalSettingsStore();

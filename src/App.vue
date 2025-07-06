@@ -14,7 +14,7 @@ import { Toaster } from '@/components/ui/sonner'
 
 import { defaultImageConversionOptions, type PrinterImage } from './logic/printerimage.ts';
 import { useImageConvertersStore } from './stores/imageconverter.ts';
-import { useGlobalSettingsStore } from './stores/globalSettings.ts';
+import { useGlobalSettingsStore } from './stores/globalsettings.ts';
 import { usePrinterStore } from './stores/printer.ts';
 
 

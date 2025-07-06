@@ -67,23 +67,12 @@ watch([canvasRef, props], async () => {
             <CardTitle>Image Preview</CardTitle>
         </CardHeader>
         <CardContent>
-            <!--
-            <p class="text-sm text-gray-500">Preview of the image to be printed.</p>
-            <p class="text-xs text-gray-400 mt-2">Width: {{ props.image.width }} px, Height: {{ props.image.height }} px
-            </p>
-            <p class="text-xs text-gray-400">Bits Length: {{ props.image.bits.length }} bytes</p>
-
-            <p class="text-xs text-gray-400">Total Pixels: {{ props.image.width * props.image.height }}</p>
-            <p class="text-xs text-gray-400">Total Bytes: {{ Math.ceil((props.image.width * props.image.height) / 8) }}
-                bytes</p>
--->
-
             <Tabs default-value="account" class="w-[400px]">
                 <TabsList>
                     <TabsTrigger value="account">
                         Preview
                     </TabsTrigger>
-                    <TabsTrigger value="password">
+                    <TabsTrigger value="password" :disabled="!props.originalImage">
                         Original Image
                     </TabsTrigger>
                 </TabsList>
