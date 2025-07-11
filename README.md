@@ -8,8 +8,7 @@ A [Web App](https://k0in.github.io/Phomemo-M02-Web/) for printing to Phomemo pri
 
 ## Supported Browsers
 
-- Chrome
-- Edge
+![PWA Support](https://can-i-use-embed.1k0.in/min-browser-version?features=api:navigator:serviceworker&features=manifests:webapp:serviceworker&features=api:beforeinstallpromptevent&features=api:navigator:serial&filter=main)
 
 Needed Features:
 
